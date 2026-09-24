@@ -26,6 +26,10 @@
   - [Running the Development Server](#running-the-development-server)
   - [Running Tests](#running-tests)
   - [Production Build](#production-build)
+- [Deployment & Hosting Guide](#deployment--hosting-guide)
+  - [1. Full App on Vercel (Recommended)](#1-full-app-on-vercel-recommended)
+  - [2. Static UI on GitHub Pages](#2-static-ui-on-github-pages)
+  - [3. Local Desktop Execution](#3-local-desktop-execution)
 - [Ethical Constraints & Guardrails](#ethical-constraints--guardrails)
 - [License](#license)
 
@@ -403,6 +407,67 @@ Create an optimized production build and test bundle validity:
 npm run build
 npm run start
 ```
+
+---
+
+## Deployment & Hosting Guide
+
+The GEO Content Gap Checker consists of an interactive Next.js frontend UI and a server-side Node.js scanning API (`/api/scan`) that securely parses external HTML and executes Gemini LLM calls.
+
+| Target Environment | Support Level | Best For | Setup Complexity |
+|---|---|---|---|
+| **Vercel** *(Recommended)* | **Full App** (UI + Live Scanner API) | Production web app for clients & team | 1-click import (Free) |
+| **Node.js Host / Render / Cloud Run** | **Full App** (UI + Live Scanner API) | Self-hosted or custom cloud infrastructure | Docker or standard Node runtime |
+| **GitHub Pages** | **Static UI Demo** (Frontend UI only) | GitHub portfolio demonstration & static preview | Automated via GitHub Actions |
+| **Local Machine** | **Full App** (UI + Live Scanner API) | Personal auditing, rapid testing, development | Instant (`npm run dev` or `.bat`) |
+
+---
+
+### 1. Full App on Vercel (Recommended)
+
+To deploy the complete application with live scanning capabilities enabled:
+
+1. **Push your repository** to GitHub.
+2. Go to **[vercel.com](https://vercel.com)** and sign in with GitHub.
+3. Click **"Add New..."** &rarr; **"Project"** and select `GEOCONTENT` (or your repository name).
+4. In the **Environment Variables** section, add:
+   - `GEMINI_API_KEY`: *(Your Google Gemini API key from [Google AI Studio](https://aistudio.google.com/app/apikey))*
+5. Click **Deploy**.
+6. Vercel automatically deploys both the frontend dashboard and the serverless `/api/scan` route handler.
+
+---
+
+### 2. Static UI on GitHub Pages
+
+The repository includes a GitHub Actions workflow (`.github/workflows/deploy.yml`) configured with `next export` to build and publish the frontend interface to GitHub Pages.
+
+#### Step 1: Enable GitHub Actions as Pages Source
+1. Navigate to your repository on GitHub.
+2. Click **Settings** &rarr; **Pages** (in the left sidebar).
+3. Under **Build and deployment** &rarr; **Source**, select **"GitHub Actions"** from the dropdown menu (do **not** select *"Deploy from a branch"*).
+
+#### Step 2: Trigger Deployment
+- Pushing to `main` will automatically trigger the workflow.
+- Alternatively, go to **Actions** &rarr; select **"Deploy GEO Content Gap Checker to GitHub Pages"** &rarr; click **"Run workflow"**.
+
+#### Step 3: Access Your Live URL
+Once the workflow finishes, your site is live at:
+```
+https://<your-username>.github.io/<repository-name>/
+```
+*(Example: `https://loserdub.github.io/GEOCONTENT/`)*
+
+> [!NOTE]
+> **Static Hosting Limitation**: GitHub Pages serves static assets (HTML/CSS/JS) only and does not run a server-side Node.js environment. The frontend dashboard will render fully, but active scan requests to `/api/scan` require a backend server. For active scanning, use [Vercel](#1-full-app-on-vercel-recommended) or [Local Desktop Execution](#3-local-desktop-execution).
+
+---
+
+### 3. Local Desktop Execution
+
+For local day-to-day use without any third-party hosting:
+
+- **Windows One-Click**: Double-click `start-app.bat` in the project root.
+- **Terminal**: Run `npm run dev` and open [http://localhost:3000](http://localhost:3000).
 
 ---
 
